@@ -14,7 +14,7 @@ set -euo pipefail
 #   - git, make
 #
 # Usage:
-#   ./build_ffmpeg_portable_macos.sh
+#   ./build-portable.sh
 #
 # Output:
 #   ./dist/ffmpeg-universal/bin/ffmpeg
