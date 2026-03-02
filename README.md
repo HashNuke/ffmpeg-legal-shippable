@@ -27,7 +27,7 @@ Useful env vars:
 
 ## Notes
 
-Prompt that was used to generate the build script
+Prompt that was used to generate the initial build script
 
 ```
 The user's computer may not have everything needed for dynamic libs. So please give me a script that
