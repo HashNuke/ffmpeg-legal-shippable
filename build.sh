@@ -239,52 +239,53 @@ build_one_arch() {
 
 make_universal() {
   local OUT="$DIST_DIR/$(OUT_BASENAME)"
-  rm -rf "$OUT"
-  mkdir -p "$OUT/bin"
+  {
+    rm -rf "$OUT"
+    mkdir -p "$OUT/bin"
 
-  local FFMPEG_ARM="$WORK_DIR/prefix-arm64/bin/ffmpeg"
-  local FFMPEG_X64="$WORK_DIR/prefix-x86_64/bin/ffmpeg"
-  local FFPROBE_ARM="$WORK_DIR/prefix-arm64/bin/ffprobe"
-  local FFPROBE_X64="$WORK_DIR/prefix-x86_64/bin/ffprobe"
+    local FFMPEG_ARM="$WORK_DIR/prefix-arm64/bin/ffmpeg"
+    local FFMPEG_X64="$WORK_DIR/prefix-x86_64/bin/ffmpeg"
+    local FFPROBE_ARM="$WORK_DIR/prefix-arm64/bin/ffprobe"
+    local FFPROBE_X64="$WORK_DIR/prefix-x86_64/bin/ffprobe"
 
-  echo ""
-  echo "==> Creating universal binaries"
-  echo ""
+    echo ""
+    echo "==> Creating universal binaries"
+    echo ""
 
-  lipo -create "$FFMPEG_ARM" "$FFMPEG_X64" -output "$OUT/bin/ffmpeg"
-  lipo -create "$FFPROBE_ARM" "$FFPROBE_X64" -output "$OUT/bin/ffprobe"
+    lipo -create "$FFMPEG_ARM" "$FFMPEG_X64" -output "$OUT/bin/ffmpeg"
+    lipo -create "$FFPROBE_ARM" "$FFPROBE_X64" -output "$OUT/bin/ffprobe"
 
-  chmod +x "$OUT/bin/ffmpeg" "$OUT/bin/ffprobe"
+    chmod +x "$OUT/bin/ffmpeg" "$OUT/bin/ffprobe"
 
-  if command -v strip >/dev/null 2>&1; then
-    strip -x "$OUT/bin/ffmpeg" "$OUT/bin/ffprobe" || true
-  fi
+    if command -v strip >/dev/null 2>&1; then
+      strip -x "$OUT/bin/ffmpeg" "$OUT/bin/ffprobe" || true
+    fi
 
-  echo ""
-  echo "==> Verifying arch slices"
-  file "$OUT/bin/ffmpeg"
-  file "$OUT/bin/ffprobe"
+    echo ""
+    echo "==> Verifying arch slices"
+    file "$OUT/bin/ffmpeg"
+    file "$OUT/bin/ffprobe"
 
-  echo ""
-  echo "==> Checking that we didn't accidentally link Homebrew/MacPorts dylibs"
-  echo "    (You should NOT see /opt/homebrew, /usr/local, MacPorts, etc.)"
-  echo ""
-  echo "ffmpeg deps:"
-  otool -L "$OUT/bin/ffmpeg" | sed 's/^/  /'
-  assert_no_third_party_dylibs "$OUT/bin/ffmpeg"
-  echo ""
-  echo "ffprobe deps:"
-  otool -L "$OUT/bin/ffprobe" | sed 's/^/  /'
-  assert_no_third_party_dylibs "$OUT/bin/ffprobe"
+    echo ""
+    echo "==> Checking that we didn't accidentally link Homebrew/MacPorts dylibs"
+    echo "    (You should NOT see /opt/homebrew, /usr/local, MacPorts, etc.)"
+    echo ""
+    echo "ffmpeg deps:"
+    otool -L "$OUT/bin/ffmpeg" | sed 's/^/  /'
+    assert_no_third_party_dylibs "$OUT/bin/ffmpeg"
+    echo ""
+    echo "ffprobe deps:"
+    otool -L "$OUT/bin/ffprobe" | sed 's/^/  /'
+    assert_no_third_party_dylibs "$OUT/bin/ffprobe"
 
-  echo ""
-  echo "==> Printing build configuration (license flags sanity-check)"
-  "$OUT/bin/ffmpeg" -buildconf | sed 's/^/  /'
-  echo ""
-  echo "==> Printing version"
-  "$OUT/bin/ffmpeg" -version | head -n 1 | sed 's/^/  /'
+    echo ""
+    echo "==> Printing build configuration (license flags sanity-check)"
+    "$OUT/bin/ffmpeg" -buildconf | sed 's/^/  /'
+    echo ""
+    echo "==> Printing version"
+    "$OUT/bin/ffmpeg" -version | head -n 1 | sed 's/^/  /'
 
-  cat >"$OUT/BUILDINFO.txt" <<EOF
+    cat >"$OUT/BUILDINFO.txt" <<EOF
 name=$(basename "$OUT")
 ffmpeg_version=$FFMPEG_VERSION
 build_stamp_utc=$BUILD_STAMP
@@ -297,9 +298,10 @@ date_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 $( "$OUT/bin/ffmpeg" -buildconf )
 EOF
 
-  echo ""
-  echo "Done."
-  echo "Binaries are in: $OUT/bin"
+    echo ""
+    echo "Done."
+    echo "Binaries are in: $OUT/bin"
+  } >&2
   echo "$OUT"
 }
 
