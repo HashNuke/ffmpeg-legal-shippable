@@ -56,6 +56,20 @@ main() {
     exit 1
   fi
 
+  local UNIQUE_ASSETS=()
+  local seen="|"
+  local asset
+  for asset in "${ASSETS[@]}"; do
+    case "$seen" in
+      *"|$asset|"*) ;;
+      *)
+        UNIQUE_ASSETS+=("$asset")
+        seen="${seen}${asset}|"
+        ;;
+    esac
+  done
+  ASSETS=("${UNIQUE_ASSETS[@]}")
+
   echo "Tagging commit..."
   git tag -a "$TAG" -m "$TAG"
 
@@ -71,4 +85,3 @@ main() {
 }
 
 main "$@"
-
