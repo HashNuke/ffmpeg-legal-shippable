@@ -98,13 +98,19 @@ package_release() {
   local BASENAME
   BASENAME="$(basename "$OUT_DIR")"
   local TARBALL="$DIST_DIR/${BASENAME}.tar.gz"
+  local STAGE="$WORK_DIR/stage-${BASENAME}"
 
   echo ""
   echo "==> Packaging release tarball"
   echo ""
 
   rm -f "$TARBALL" "$TARBALL.sha256"
-  tar -czf "$TARBALL" -C "$DIST_DIR" "$BASENAME"
+  rm -rf "$STAGE"
+  mkdir -p "$STAGE"
+  cp -f "$OUT_DIR/bin/ffmpeg" "$STAGE/ffmpeg"
+  cp -f "$OUT_DIR/bin/ffprobe" "$STAGE/ffprobe"
+  tar -czf "$TARBALL" -C "$STAGE" ffmpeg ffprobe
+  rm -rf "$STAGE"
 
   if command -v shasum >/dev/null 2>&1; then
     shasum -a 256 "$TARBALL" > "$TARBALL.sha256"

@@ -1,4 +1,4 @@
-## ffmpeg-macos-legal-portable
+## ffmpeg-legal-shippable
 
 Builds portable (macOS 14.0+) FFmpeg binaries **without GPL** and **without nonfree** features, with macOS hardware acceleration support (VideoToolbox).
 
@@ -17,6 +17,10 @@ Output:
 - `dist/ffmpeg-8.0.1-YYYYMMDDHHMM-macos-universal/bin/ffmpeg`
 - `dist/ffmpeg-8.0.1-YYYYMMDDHHMM-macos-universal/bin/ffprobe`
 - `dist/ffmpeg-8.0.1-YYYYMMDDHHMM-macos-universal.tar.gz`
+
+The `.tar.gz` extracts the following files at the destination directory:
+- `ffmpeg`
+- `ffprobe`
 
 Useful env vars:
 - `MIN_MACOS=14.0` (default: `14.0`)
